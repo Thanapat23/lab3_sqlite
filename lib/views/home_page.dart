@@ -15,6 +15,7 @@ enum SingingCharacter { food, drink }
 class _HomePageState extends State<HomePage> {
   // All journals
   List<Map<String, dynamic>> _journals = [];
+  final _formKey = GlobalKey<FormState>();
 
   SingingCharacter? _character = SingingCharacter.food;
   bool _isLoading = true;
@@ -70,123 +71,141 @@ class _HomePageState extends State<HomePage> {
                 // this will prevent the soft keyboard from covering the text fields
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  TextField(
-                    controller: _namefoodController,
-                    decoration: const InputDecoration(
-                      hintText: 'Food/Drink',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextField(
-                    controller: _priceController,
-                    decoration: const InputDecoration(
-                      hintText: 'Price',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        const Text(
-                          'Type : ',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: ListTile(
-                            title: Row(
-                              children: [
-                                Radio<SingingCharacter>(
-                                    activeColor: Colors.black,
-                                    value: SingingCharacter.food,
-                                    groupValue: _character,
-                                    onChanged: (SingingCharacter? value) {
-                                      setState(() {
-                                        _character = value;
-                                      });
-                                    }),
-                                const Text(
-                                  'Food',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: ListTile(
-                            title: Row(
-                              children: [
-                                Radio<SingingCharacter>(
-                                    activeColor: Colors.black,
-                                    value: SingingCharacter.drink,
-                                    groupValue: _character,
-                                    onChanged: (SingingCharacter? value) {
-                                      setState(() {
-                                        _character = value;
-                                      });
-                                    }),
-                                const Text(
-                                  'Drink',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.grey,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20), // <-- Radius
-                        ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    TextFormField(
+                      controller: _namefoodController,
+                      decoration: const InputDecoration(
+                        hintText: 'Food/Drink',
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
                       ),
-                      onPressed: () async {
-                        // Save new journal
-                        if (id == null) {
-                          await _addItem();
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the menu name.';
                         }
-
-                        if (id != null) {
-                          await _updateItem(id);
-                        }
-
-                        // Clear the text fields
-                        _namefoodController.text = '';
-                        _priceController.text = '';
-                        _character = SingingCharacter.food;
-                        // Close the bottom sheet
-                        if (!mounted) return;
-                        Navigator.of(context).pop();
+                        return null;
                       },
-                      child: Text(
-                        id == null ? 'Create New' : 'Update',
-                        style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      controller: _priceController,
+                      decoration: const InputDecoration(
+                        hintText: 'Price',
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter price.';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          const Text(
+                            'Type : ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: ListTile(
+                              title: Row(
+                                children: [
+                                  Radio<SingingCharacter>(
+                                      activeColor: Colors.black,
+                                      value: SingingCharacter.food,
+                                      groupValue: _character,
+                                      onChanged: (SingingCharacter? value) {
+                                        setState(() {
+                                          _character = value;
+                                        });
+                                      }),
+                                  const Text(
+                                    'Food',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: ListTile(
+                              title: Row(
+                                children: [
+                                  Radio<SingingCharacter>(
+                                      activeColor: Colors.black,
+                                      value: SingingCharacter.drink,
+                                      groupValue: _character,
+                                      onChanged: (SingingCharacter? value) {
+                                        setState(() {
+                                          _character = value;
+                                        });
+                                      }),
+                                  const Text(
+                                    'Drink',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                ],
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.grey,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(20), // <-- Radius
+                          ),
+                        ),
+                        onPressed: () async {
+                          // Save new journal
+                          if (id == null) {
+                            await _addItem();
+                          }
+
+                          if (id != null) {
+                            await _updateItem(id);
+                          }
+
+                          // Clear the text fields
+                          _namefoodController.text = '';
+                          _priceController.text = '';
+                          _character = SingingCharacter.food;
+                          // Close the bottom sheet
+                          if (!mounted) return;
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          id == null ? 'Create New' : 'Update',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             );
           });
